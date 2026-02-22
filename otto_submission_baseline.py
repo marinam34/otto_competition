@@ -55,7 +55,7 @@ def suggest_buys(history_aids, history_types):
 TEST_DIR = './data_parquet/test/'
 
 def generate_submission():
-    print("\n2. Генерация submission_baseline.csv по тестовому набору Kaggle")
+    print("\n2. Генерация submission_baseline.csv по тестовому набору")
     test_files = sorted(os.listdir(TEST_DIR))
     
     with open('submission_baseline.csv', 'w') as f:
