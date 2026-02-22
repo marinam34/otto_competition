@@ -9,7 +9,7 @@ TRAIN_CV_DIR = './data_parquet/train_cv/'
 files = sorted([os.path.join(TRAIN_CV_DIR, f) for f in os.listdir(TRAIN_CV_DIR)])
 
 def build_buy2buy_matrix():
-    print("Шаг 1: Строим граф Buy2Buy (Совместные покупки и корзины)...")
+    print("Строим граф Buy2Buy (Совместные покупки и корзины)")
     matrix = defaultdict(lambda: defaultdict(int))
     for file_name in tqdm(files, desc="Обработка чанков Buy2Buy"):
         df = pl.read_parquet(file_name)
@@ -28,7 +28,7 @@ def build_buy2buy_matrix():
                     matrix[item_b][item_a] += 1
     print(f"Граф связей построен! Уникальных товаров с покупками: {len(matrix)}")
     
-    print("Отбираем ТОП-20 самых прочных связей...")
+    print("Отбираем ТОП-20 самых прочных связей")
     top_20_matrix = {}
     for item, connections in list(matrix.items()):
         sorted_connections = sorted(connections.items(), key=lambda x: x[1], reverse=True)[:20]
@@ -38,7 +38,7 @@ def build_buy2buy_matrix():
     return top_20_matrix
 
 def build_click2click_matrix():
-    print("\nШаг 2: Строим граф Click2Click (Клики к Кликам)...")
+    print("\nШаг 2: Строим граф Click2Click")
     matrix = defaultdict(lambda: defaultdict(float))
     DAY_MS = 24 * 60 * 60 * 1000
     for file_name in tqdm(files, desc="Обработка чанков Click2Click"):
@@ -72,7 +72,7 @@ def build_click2click_matrix():
                     matrix[item_a][item_b] += weight
                     matrix[item_b][item_a] += weight
     print(f"Граф Click2Click построен! Уникальных товаров с кликами: {len(matrix)}")
-    print("Отбираем ТОП-20 самых прочных связей для кликов...")
+    print("Отбираем ТОП-20 самых прочных связей для кликов")
     top_20_matrix = {}
     for item, connections in list(matrix.items()):
         sorted_connections = sorted(connections.items(), key=lambda x: x[1], reverse=True)[:20]
@@ -82,7 +82,7 @@ def build_click2click_matrix():
     return top_20_matrix
 
 def build_click2buy_matrix():
-    print("\nШаг 3: Строим граф Click2Buy (Клики к Корзинам/Заказам)...")
+    print("\nСтроим граф Click2Buy")
     matrix = defaultdict(lambda: defaultdict(float))
     DAY_MS = 24 * 60 * 60 * 1000
     for file_name in tqdm(files, desc="Обработка чанков Click2Buy"):
@@ -114,7 +114,7 @@ def build_click2buy_matrix():
                     matrix[item_a][item_b] += weight
                     matrix[item_b][item_a] += weight
     print(f"Граф Click2Buy построен! Уникальных товаров с кликами/покупками: {len(matrix)}")
-    print("Отбираем ТОП-20 самых прочных связей для Click2Buy...")
+    print("Отбираем ТОП-20 самых прочных связей для Click2Buy")
     top_20_matrix = {}
     for item, connections in list(matrix.items()):
         sorted_connections = sorted(connections.items(), key=lambda x: x[1], reverse=True)[:20]
@@ -135,7 +135,7 @@ if __name__ == "__main__":
         del buy2buy, df_top20_buy
         gc.collect()
     else:
-        print("Файл top_20_buy2buy.parquet уже существует, пропускаем Шаг 1.")
+        print("Файл top_20_buy2buy.parquet уже существует")
         
     if not os.path.exists("top_20_click2click.parquet"):
         click2click = build_click2click_matrix()
@@ -144,11 +144,11 @@ if __name__ == "__main__":
             "candidates": list(click2click.values())
         })
         df_top20_click.write_parquet("top_20_click2click.parquet")
-        print("Файл top_20_click2click.parquet готов.")
+        print("Файл top_20_click2click.parquet готов")
         del click2click, df_top20_click
         gc.collect()
     else:
-        print("Файл top_20_click2click.parquet уже существует, пропускаем Шаг 2.")
+        print("Файл top_20_click2click.parquet уже существует")
         
     if not os.path.exists("top_20_click2buy.parquet"):
         click2buy = build_click2buy_matrix()
@@ -161,4 +161,4 @@ if __name__ == "__main__":
         del click2buy, df_top20_c2b
         gc.collect()
     else:
-        print("Файл top_20_click2buy.parquet уже существует, пропускаем Шаг 3.")
+        print("Файл top_20_click2buy.parquet уже существует")
