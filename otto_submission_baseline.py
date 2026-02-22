@@ -2,7 +2,7 @@ import os
 import polars as pl
 from tqdm.auto import tqdm
 
-print("1. Загрузка 3-х матриц со-визитации в память...")
+print("Загрузка 3-х матриц со-визитации в память")
 try:
     dict_clicks = pl.read_parquet('top_20_click2click.parquet').to_pandas().set_index('aid')['candidates'].to_dict()
     dict_buy2buy = pl.read_parquet('top_20_buy2buy.parquet').to_pandas().set_index('aid')['candidates'].to_dict()
@@ -10,7 +10,7 @@ try:
 except Exception as e:
     print("Ошибка загрузки матриц.")
     raise e
-print("Матрицы загружены!")
+print("Матрицы загружены")
 
 def suggest_clicks(history_aids):
     unique_aids = list(dict.fromkeys(history_aids[::-1]))
@@ -55,7 +55,7 @@ def suggest_buys(history_aids, history_types):
 TEST_DIR = './data_parquet/test/'
 
 def generate_submission():
-    print("\n2. Генерация submission_baseline.csv по скрытому тестовому набору Kaggle...")
+    print("\n2. Генерация submission_baseline.csv по тестовому набору Kaggle")
     test_files = sorted(os.listdir(TEST_DIR))
     
     with open('submission_baseline.csv', 'w') as f:
@@ -87,7 +87,7 @@ def generate_submission():
                 f.write(f"{session}_carts,{str_carts}\n")
                 f.write(f"{session}_orders,{str_orders}\n")
 
-    print("\nПолный эвристический (без ML) submission_baseline.csv успешно сгенерирован (размер ~2.5 ГБ)!")
+    print("\n submission_baseline.csv успешно сгенерирован")
 
 if __name__ == "__main__":
     generate_submission()
